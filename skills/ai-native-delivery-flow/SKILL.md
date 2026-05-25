@@ -1,23 +1,15 @@
 ---
-name: delivery
-description: "AI Native 团队研发交付工作流。当用户需要启动新功能、生成开发需求/设计/测试清单/任务拆分、执行开发、代码审查或发布确认时使用。支持从飞书文档获取产品需求（lark-cli），自动生成开发需求初稿，通过 5 个步骤完成从需求到发布的完整交付。输入 /delivery 触发。"
-user-invocable: true
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Grep
-  - Glob
-  - Agent
+name: ai-native-delivery-flow
+description: "AI Native 团队研发交付工作流。当用户需要启动新功能、从飞书获取产品需求、生成开发需求/设计/测试清单/任务拆分、执行开发、代码审查或发布确认时使用。集成 lark-cli 实现飞书文档读取和任务同步，通过 5 个步骤完成从需求到发布的完整交付流程。触发词：/delivery、新功能、开发需求、开发设计、任务拆分、发布确认。"
+license: MIT
 metadata:
-  requires:
-    bins: ["lark-cli"]
+  author: carpon
+  version: "1.0.0"
 ---
 
 # AI Native 研发交付工作流
 
-你是 AI Native 团队的研发交付工作流助手。引导用户按照下面定义的 5 个核心步骤完成从需求到发布的完整交付。
+AI Native 团队从需求到发布的完整交付流程，集成飞书（lark-cli）实现文档获取和任务同步。
 
 ## 核心流程
 
@@ -25,6 +17,16 @@ metadata:
 飞书产品需求 → 1. 开发需求文档 → [人工审核] → 2. 开发设计文档 + 测试清单 → [人工审核] → 3. 任务拆分清单 + 同步飞书任务 → 4. 开发执行 + 自动代码审核 + MR人工审核 → 5. 发布确认/发布清单
 
 （文档回补贯穿全程，每次对话发现不一致立即更新）
+```
+
+## 前置依赖
+
+需要安装 [lark-cli](https://github.com/larksuite/cli)：
+
+```bash
+npx @larksuite/cli@latest install
+lark-cli config init
+lark-cli auth login --recommend
 ```
 
 ## 核心原则
@@ -56,7 +58,7 @@ requirements/<功能名>/
 - 发现新的测试场景 → 更新 `04_test_checklist.md`
 - 任务范围有调整 → 更新 `05_task_breakdown.md`
 
-**做法：** 每次对话中如果讨论到与已有文档不一致的内容，先确认变更，然后直接修改文档并在变更记录中注明原因和日期。不要等到特定的"回补阶段"。
+**做法：** 每次对话中如果讨论到与已有文档不一致的内容，先确认变更，然后直接修改文档并在变更记录中注明原因和日期。
 
 ---
 
@@ -78,7 +80,6 @@ lark-cli docs +fetch --api-version v2 --doc "<飞书文档URL或token>" --scope 
 
 ```bash
 lark-cli wiki spaces get_node --params '{"token":"<wiki_token>"}'
-# 用返回的 obj_token 读取文档
 lark-cli docs +fetch --api-version v2 --doc "<obj_token>" --scope body --detail rich
 ```
 
@@ -98,12 +99,7 @@ lark-cli docs +fetch --api-version v2 --doc "<obj_token>" --scope body --detail 
 
 **3. 交用户审核**
 
-向用户展示完整的开发需求文档，附带：
-- 审核清单（逐项确认）
-- AI 发现的缺口列表
-- 所有"待确认问题"
-
-明确告知用户：这是初稿，需确认通过后才进入步骤二。
+向用户展示完整的开发需求文档，附带审核清单、AI 发现的缺口列表和所有"待确认问题"。确认通过后才进入步骤二。
 
 ### 开发需求文档模板
 
@@ -301,16 +297,11 @@ lark-cli docs +fetch --api-version v2 --doc "<obj_token>" --scope body --detail 
 用户确认任务拆分后，使用 `lark-cli` 创建飞书任务：
 
 ```bash
-# 创建任务
 lark-cli task create --params '{"task":{"summary":"<任务标题>","description":"<任务描述>"}}'
-
-# 如果需要添加到任务列表
 lark-cli task tasklists add_tasks --params '{"tasklist_guid":"<列表ID>","task_guids":["<任务ID>"]}'
 ```
 
 ### 任务模板
-
-每个任务包含：
 
 ```markdown
 ## 任务 N：<标题>
@@ -481,7 +472,7 @@ lark-cli task patch --params '{"task_guid":"<任务ID>","update_fields":["status
 
 ## 交互方式
 
-当用户输入 `/delivery` 时：
+当用户触发此 skill 时：
 
 1. 询问当前需要哪个步骤
 2. 如果是"新功能"或提供了飞书文档链接 → 从步骤一开始
