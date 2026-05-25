@@ -1,0 +1,15 @@
+{
+  "name": "ai-native-delivery-flow",
+  "owner": {
+    "name": "Carpon",
+    "url": "https://github.com/carpon"
+  },
+  "plugins": [
+    {
+      "name": "ai-native-delivery-flow",
+      "source": "./",
+      "description": "AI Native 团队研发交付工作流：飞书需求 → 开发需求 → 开发设计 → 任务拆分 → 开发执行 → 发布确认",
+      "version": "1.0.0"
+    }
+  ]
+}

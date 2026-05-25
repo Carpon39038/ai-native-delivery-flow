@@ -1,0 +1,22 @@
+{
+  "name": "ai-native-delivery-flow",
+  "version": "1.0.0",
+  "description": "AI Native 团队研发交付工作流。从飞书获取产品需求，经过开发需求、开发设计、任务拆分、开发执行到发布确认的完整交付流程，集成 lark-cli 实现飞书文档读取和任务同步。",
+  "author": {
+    "name": "Carpon",
+    "url": "https://github.com/carpon"
+  },
+  "repository": "https://github.com/carpon/ai-native-delivery-flow",
+  "license": "MIT",
+  "keywords": [
+    "delivery",
+    "workflow",
+    "feishu",
+    "lark",
+    "ai-native",
+    "requirement",
+    "development",
+    "code-review",
+    "release"
+  ]
+}
